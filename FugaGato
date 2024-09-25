@@ -1,0 +1,139 @@
+/******************************************************************************
+ *  ALUNO: Ezequiel Gomes de Carvalho
+ *  NUSP: 15510880
+ ******************************************************************************/
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class FugaGato {
+    public static void main(String[] args) {
+        // N define o tamanho da grade (NxN) e T o número de simulações
+        int N = Integer.parseInt(args[0]);
+        int T = Integer.parseInt(args[1]);
+
+        // Coordenadas iniciais do gato (começa no meio da grade)
+        int x = N / 2;
+        int y = N / 2;
+
+        // Inicializando as possibilidades de movimento (esquerda, direita, cima, baixo)
+        List<List<Integer>> possibilities = List.of(
+                List.of(x - 1, y),
+                List.of(x + 1, y),
+                List.of(x, y + 1),
+                List.of(x, y - 1)
+        );
+
+        // Variáveis para contar derrotas (gato encurralado) e vitórias (gato escapa)
+        int defeat = 0;
+        int win = 0;
+
+        // Objeto Random para gerar movimentos aleatórios
+        Random random = new Random();
+
+        // Cabeçalho da saída no console
+        StdOut.println("---------------------------------------");
+        StdOut.println(" Simulação  ---  Quantidade de passos  ");
+        StdOut.println("---------------------------------------");
+
+        int countp; // Contador de passos
+        int counts = 0; // Contador de simulações
+
+        // Loop principal para rodar as simulações
+        for (int i = 0; i < T; i++) {
+            // Limpa a tela a cada nova simulação
+            StdDraw.clear();
+
+            // Define o tamanho da janela (600x600 pixels)
+            StdDraw.setCanvasSize(600, 600);
+
+            // Define a escala para a grade (0 a N)
+            StdDraw.setScale(0, N);
+
+            // Define a cor da grade (cinza) e espessura das linhas
+            StdDraw.setPenColor(StdDraw.GRAY);
+            StdDraw.setPenRadius(0.005);
+
+            // Desenha as linhas da grade NxN
+            for (int a = 0; a < N; a++) {
+                StdDraw.line(0, a, N, a); // Linhas horizontais
+                StdDraw.line(a, 0, a, N); // Linhas verticais
+            }
+
+            // Define a cor do "gato" e espessura da linha
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.setPenRadius(0.008);
+
+            // Reseta a posição do gato no centro
+            x = N / 2;
+            y = N / 2;
+
+            // Cria uma grade (NxN) onde 0 indica célula não visitada
+            List<List<Integer>> grid = new ArrayList<>();
+            for (int a = 0; a <= N; a++) {
+                List<Integer> row = new ArrayList<>();
+                for (int j = 0; j <= N; j++) {
+                    row.add(0); // Inicializa cada célula como 0 (não visitada)
+                }
+                grid.add(row); // Adiciona a linha à grade
+            }
+
+            countp = 0; // Reseta o contador de passos para a simulação atual
+
+            // Enquanto o gato estiver dentro da grade, continua tentando se mover
+            while (x > 0 && x < N && y > 0 && y < N) {
+                // Verifica se o gato está cercado (não há mais células disponíveis)
+                if (grid.get(x + 1).get(y) == 1 && grid.get(x - 1).get(y) == 1
+                        && grid.get(x).get(y + 1) == 1 && grid.get(x).get(y - 1) == 1) {
+                    defeat += 1; // Incrementa o contador de derrotas
+                    break; // Sai do loop se o gato estiver cercado
+                }
+
+                // Escolhe aleatoriamente uma direção (0=esquerda, 1=direita, 2=cima, 3=baixo)
+                int choice = random.nextInt(4);
+
+                // Movimentos baseados na escolha aleatória e nas células ainda não visitadas
+                if (choice == 0 && grid.get(x - 1).get(y) == 0) { // Move para a esquerda
+                    StdDraw.line(x, y, x - 1, y); // Desenha a linha do movimento
+                    grid.get(x).set(y, 1); // Marca a célula atual como visitada
+                    x -= 1; // Atualiza a posição x
+                    countp += 1; // Incrementa o contador de passos
+                }
+                if (choice == 1 && grid.get(x + 1).get(y) == 0) { // Move para a direita
+                    StdDraw.line(x, y, x + 1, y);
+                    grid.get(x).set(y, 1);
+                    x += 1;
+                    countp += 1;
+                }
+                if (choice == 2 && grid.get(x).get(y + 1) == 0) { // Move para cima
+                    StdDraw.line(x, y, x, y + 1);
+                    grid.get(x).set(y, 1);
+                    y += 1;
+                    countp += 1;
+                }
+                if (choice == 3 && grid.get(x).get(y - 1) == 0) { // Move para baixo
+                    StdDraw.line(x, y, x, y - 1);
+                    grid.get(x).set(y, 1);
+                    y -= 1;
+                    countp += 1;
+                }
+            }
+
+            // Se o gato alcançar a borda, conta como vitória
+            if (x == N || x == 0 || y == N || y == 0) {
+                win += 1;
+            }
+
+            // Imprime o resultado da simulação (número de passos)
+            StdOut.println("       " + counts + "     ---            " + countp);
+            counts += 1; // Incrementa o número da simulação
+        }
+
+        // Imprime o resumo das simulações
+        StdOut.println("---------------------------------------");
+        StdOut.println("Defeat: " + defeat + "\nWin: " + win);
+        StdOut.println("O gato ficou sem saída " + (defeat * 100) / T + "% das vezes");
+        StdOut.println("---------------------------------------");
+    }
+}
