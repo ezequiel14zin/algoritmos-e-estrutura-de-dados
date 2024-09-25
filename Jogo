@@ -1,0 +1,57 @@
+
+import java.util.Random;
+
+public class jogo {
+    public static void main(String[] args) {
+
+        int a = Integer.parseInt(args[0]);
+        int b = Integer.parseInt(args[1]);
+        int t = Integer.parseInt(args[2]);
+        int ans;
+        int nochoice = 0;
+        int withchoice = 0;
+        Random random = new Random();
+
+        for (int i = 0; i < t; i++) {
+            // NO CHOICE
+            /*
+             * 'n' representa qual carta a máquina escolhe
+             * no 'no choice' se n < 50 então ele escolhe carta a
+             * se n >= 50 então escolhe carta b
+             */
+            int n = random.nextInt(99) + 0;
+
+            if (n < 50 && a > b) {
+                nochoice += 1;
+            }
+            if (n >= 50 && b > a) {
+                nochoice += 1;
+            }
+
+            /* WITH CHOICE
+             * igual ao 'no choice' com a diferênça que ele faz a seguinte verificação
+             * se ele escolheu 'a' e 'a' é < que 50 então ele continual com b
+             * se 'a' é > 50, ele continua com 'a'
+             * e faz o mesmo para o 'b'
+             */
+
+            if (n < 50 && a < 50 && b > a) {
+                withchoice += 1;
+            }
+            if (n < 50 && a > 50 && a > b) {
+                withchoice += 1;
+            }
+
+
+            if (n >= 50 && b < 50 && a > b) {
+                withchoice += 1;
+            }
+            if (n >= 50 && b >= 50 && b > a) {
+                withchoice += 1;
+            }
+        }
+
+        System.out.println("No choice: " + nochoice + " - " + (nochoice * 100) / t + "%");
+        System.out.println("With choice: " + withchoice + " - " + (withchoice * 100) / t + "%");
+    }
+}
